@@ -25,25 +25,20 @@ workflow M1_PON {
 		}		
 		
 		call SelectVariants {
-		input:
-            input_vcf = M1.output_pon_vcf,
-            input_vcf_idx = M1.output_pon_vcf_index,
-            ref_fasta = ref_fasta,
-            ref_fai = ref_fai,
-            ref_dict = ref_dict,
-            gatk_docker = gatk_docker,
-            VCF_pre = M1.fname
+		    input:
+                input_vcf = M1.output_pon_vcf,
+                input_vcf_idx = M1.output_pon_vcf_index,
+                ref_fasta = ref_fasta,
+                ref_fai = ref_fai,
+                ref_dict = ref_dict,
+                gatk_docker = gatk_docker,
+                VCF_pre = M1.fname
 	    }
 	}
-    
-    call CreateFoFN {
-        input:
-            array_of_files = SelectVariants.filtered_vcf,
-    }
-    
+
 	call CombineVariants {
 		input:
-            filtered_vcfs_list = CreateFoFN.fofn_list,
+            filtered_vcfs_list = SelectVariants.filtered_vcf,
             ref_fasta = ref_fasta,
             ref_fai = ref_fai,
             ref_dict = ref_dict,
@@ -55,7 +50,6 @@ workflow M1_PON {
         Array[File] output_pon_vcf_index = M1.output_pon_vcf_index        
         Array[File] output_pon_stats_txt = M1.output_pon_stats_txt
         Array[File] filtered_vcf = SelectVariants.filtered_vcf
-        File filtered_vcfs_list = CreateFoFN.fofn_list
         File pon = CombineVariants.pon
     }
 
@@ -141,28 +135,9 @@ task SelectVariants {
     }
 }
 
-task CreateFoFN {
-    # Command parameters
-    Array[String] array_of_files
-    String fofn_name
-    
-    command <<<
-        mv ${write_lines(array_of_files)}  ${fofn_name}.list
-    >>>
-    
-    output {
-        File fofn_list = "${fofn_name}.list"
-    }
-    
-    runtime {
-        docker: "ubuntu:latest"
-    }
-}
-
 task CombineVariants {
     # input
-    File filtered_vcfs_list
-    Array[File] input_vcfs = read_lines(filtered_vcfs_list)
+    Array[File] filtered_vcfs_list
     File ref_fasta
     File ref_fai
     File ref_dict
@@ -175,7 +150,7 @@ task CombineVariants {
         -T CombineVariants \
         -nt 4 --minimumN 5 --genotypemergeoption UNSORTED \
         -R ${ref_fasta} \
-        -V ${sep=' -V ' input_vcfs} \
+        -V ${sep=' -V ' filtered_vcfs_list} \
         -o "normals.merged.min5.vcf"
     >>>
         
