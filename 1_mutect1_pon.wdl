@@ -51,6 +51,7 @@ workflow M1_PON {
         Array[File] output_pon_stats_txt = M1_pon.output_pon_stats_txt
         Array[File] filtered_vcf = SelectVariants.filtered_vcf
         File pon = CombineVariants.pon
+        File pon_idx = CombineVariants.pon_idx
     }
 
 	meta {
@@ -163,7 +164,7 @@ task CombineVariants {
         }
     
     output {
-        File pon = "normals.merged.min5.vcf"
-        File pon_idx = "normals.merged.min5.vcf.tbi"
+        File pon = "normals.merged.min5.vcf.gz"
+        File pon_idx = "normals.merged.min5.vcf.gz.tbi"
     }
 }
