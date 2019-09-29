@@ -51,7 +51,6 @@ workflow M1_PON {
         Array[File] output_pon_stats_txt = M1.output_pon_stats_txt
         Array[File] filtered_vcf = SelectVariants.filtered_vcf
         File pon = CombineVariants.pon
-        File pon_idx = CombineVariants.pon_idx
     }
 
 	meta {
@@ -153,16 +152,6 @@ task CombineVariants {
         -R ${ref_fasta} \
         -V ${sep=' -V ' filtered_vcfs_list} \
         -o "normals.merged.min5.vcf"
-        
-        wget https://github.com/samtools/htslib/releases/download/1.9/htslib-1.9.tar.bz2
-        tar -vxjf htslib-1.9.tar.bz2
-        cd htslib-1.9
-        make
-        make install
-        cd 
-        
-        bgzip normals.merged.min5.vcf
-        tabix normals.merged.min5.vcf.gz
     >>>
         
         runtime {
@@ -172,6 +161,5 @@ task CombineVariants {
     
     output {
         File pon = "normals.merged.min5.vcf.gz"
-        File pon_idx = "normals.merged.min5.vcf.gz.tbi"
     }
 }
