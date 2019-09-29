@@ -154,6 +154,13 @@ task CombineVariants {
         -V ${sep=' -V ' filtered_vcfs_list} \
         -o "normals.merged.min5.vcf"
         
+        wget https://github.com/samtools/htslib/releases/download/1.9/htslib-1.9.tar.bz2
+        tar -vxjf htslib-1.9.tar.bz2
+        cd htslib-1.9
+        make
+        make install
+        cd 
+        
         bgzip normals.merged.min5.vcf
         tabix normals.merged.min5.vcf.gz
     >>>
