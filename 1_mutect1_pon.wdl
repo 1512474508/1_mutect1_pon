@@ -14,7 +14,7 @@ workflow M1_PON {
         File normal_bam = normal_bam_pair.left
         File normal_bai = normal_bam_pair.right
         
-		call M1_pon {
+		call M1 {
 			input:
                 normal_bam = normal_bam,
                 normal_bai = normal_bai,
@@ -26,13 +26,13 @@ workflow M1_PON {
 		
 		call SelectVariants {
 		    input:
-                input_vcf = M1_pon.output_pon_vcf,
-                input_vcf_idx = M1_pon.output_pon_vcf_index,
+                input_vcf = M1.output_pon_vcf,
+                input_vcf_idx = M1.output_pon_vcf_index,
                 ref_fasta = ref_fasta,
                 ref_fai = ref_fai,
                 ref_dict = ref_dict,
                 gatk_docker = gatk_docker,
-                VCF_pre = M1_pon.fname
+                VCF_pre = M1.fname
 	    }
 	}
 
@@ -46,9 +46,9 @@ workflow M1_PON {
 	}
 
     output {
-        Array[File] output_pon_vcf = M1_pon.output_pon_vcf
-        Array[File] output_pon_vcf_index = M1_pon.output_pon_vcf_index        
-        Array[File] output_pon_stats_txt = M1_pon.output_pon_stats_txt
+        Array[File] output_pon_vcf = M1.output_pon_vcf
+        Array[File] output_pon_vcf_index = M1.output_pon_vcf_index        
+        Array[File] output_pon_stats_txt = M1.output_pon_stats_txt
         Array[File] filtered_vcf = SelectVariants.filtered_vcf
         File pon = CombineVariants.pon
         File pon_idx = CombineVariants.pon_idx
@@ -61,7 +61,7 @@ workflow M1_PON {
     }
 }
 
-task M1_pon {
+task M1 {
 	# input
 	File normal_bam
 	File normal_bai
