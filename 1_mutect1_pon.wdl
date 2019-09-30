@@ -179,8 +179,8 @@ task htslib {
     String htslib_docker
     
     command <<<
-        bgzip ${combined_vcf}
-        tabix ${combined_vcf}.gz
+        bgzip ./${combined_vcf}
+        tabix ./${combined_vcf}.gz
     >>>
     
     runtime {
