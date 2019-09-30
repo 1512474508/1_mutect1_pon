@@ -179,8 +179,8 @@ task htslib {
     String htslib_docker
     
     command <<<
-        bgzip ./${combined_vcf}
-        tabix ./${combined_vcf}.gz
+        bgzip ${combined_vcf}
+        tabix ${combined_vcf}.gz
     >>>
     
     runtime {
@@ -189,7 +189,7 @@ task htslib {
     }
     
     output {
-        File pon = "normals.merged.min5.vcf.gz"
-        File pon_idx = "normals.merged.min5.vcf.gz.tbi"
+        File pon = "${combined_vcf}.gz"
+        File pon_idx = "${combined_vcf}.gz.tbi"
     }
 }
