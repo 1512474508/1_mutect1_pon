@@ -44,13 +44,20 @@ workflow M1_PON {
             ref_dict = ref_dict,
             gatk_docker = gatk_docker
 	}
+	
+	call htslib {
+	    input:
+	        combined_vcf = CombineVariants.combined_vcf
+	}
 
     output {
         Array[File] output_pon_vcf = M1.output_pon_vcf
         Array[File] output_pon_vcf_index = M1.output_pon_vcf_index        
         Array[File] output_pon_stats_txt = M1.output_pon_stats_txt
         Array[File] filtered_vcf = SelectVariants.filtered_vcf
-        File pon = CombineVariants.pon
+        File combined_vcf = CombineVariants.combined_vcf
+        File pon = htslib.pon
+        File pon_idx = htslib.pon_idx
     }
 
 	meta {
@@ -160,6 +167,29 @@ task CombineVariants {
         }
     
     output {
+        File combined_vcf = "normals.merged.min5.vcf"
+    }
+}
+
+task htslib {
+    # input
+    File combined_vcf
+    
+    # runtime
+    String htslib_docker
+    
+    command <<<
+        bgzip ${combined_vcf}
+        tabix ${combined_vcf}.gz
+    >>>
+    
+    runtime {
+        docker: htslib_docker   # miguelpmachado/htslib:1.9
+        memory: "4 GB"
+    }
+    
+    output {
         File pon = "normals.merged.min5.vcf.gz"
+        File pon_idx = "normals.merged.min5.vcf.gz.tbi"
     }
 }
