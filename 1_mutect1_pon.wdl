@@ -180,8 +180,8 @@ task htslib {
     String htslib_docker
     
     command <<<
-        bgzip ${combined_vcf_pre}
-        tabix ${combined_vcf_pre}.gz
+        bgzip ${combined_vcf} > ${combined_vcf_pre}.gz
+        tabix ${combined_vcf_pre}.gz > ${combined_vcf_pre}.gz.tbi
     >>>
     
     runtime {
