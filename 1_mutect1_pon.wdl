@@ -174,13 +174,14 @@ task CombineVariants {
 task htslib {
     # input
     File combined_vcf
+    String combined_vcf_pre = basename(combined_vcf, ".vcf")
     
     # runtime
     String htslib_docker
     
     command <<<
-        bgzip ${combined_vcf}
-        tabix ${combined_vcf}.gz
+        bgzip ${combined_vcf_pre}
+        tabix ${combined_vcf_pre}.gz
     >>>
     
     runtime {
@@ -189,7 +190,7 @@ task htslib {
     }
     
     output {
-        File pon = "${combined_vcf}.gz"
-        File pon_idx = "${combined_vcf}.gz.tbi"
+        File pon = "${combined_vcf_pre}.gz"
+        File pon_idx = "${combined_vcf_pre}.gz.tbi"
     }
 }
