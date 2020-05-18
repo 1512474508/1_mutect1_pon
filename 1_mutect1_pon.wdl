@@ -181,7 +181,7 @@ task htslib {
     
     command <<<
         bgzip ${combined_vcf}
-        mv ${combined_vcf}.gz ./${combined_vcf_pre}
+        mv ${combined_vcf}.gz ./${combined_vcf_pre}.gz
         tabix ${combined_vcf_pre}.gz
     >>>
     
